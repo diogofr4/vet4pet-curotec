@@ -17,7 +17,7 @@ export class LoginComponent {
 
   constructor(private fb: FormBuilder, private store: Store) {
     this.loginForm = this.fb.group({
-      username: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required]
     });
     this.loading$ = this.store.select(selectLoading);
