@@ -26,7 +26,7 @@ export class AuthEffects {
         ofType(AuthActions.loginSuccess),
         tap(({ response }) => {
           localStorage.setItem('token', response.token);
-          localStorage.setItem('user', JSON.stringify(response.user));
+          localStorage.setItem('user', JSON.stringify(response));
           this.router.navigate(['/dashboard']);
         })
       ),
