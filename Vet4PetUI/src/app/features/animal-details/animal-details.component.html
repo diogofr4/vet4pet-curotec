@@ -1,110 +1,52 @@
-<div class="container mt-4">
-  <!-- Loading State -->
-  <div *ngIf="loading" class="d-flex justify-content-center align-items-center" style="height: 200px;">
-    <div class="spinner-border" role="status">
-      <span class="visually-hidden">Loading...</span>
+<div class="animal-details-container">
+  <div *ngIf="loading" class="loading">Loading animal information...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <div *ngIf="animal" class="info-cards">
+    <mat-card class="animal-card">
+      <mat-card-header>
+        <mat-card-title>{{ animal.name }}</mat-card-title>
+        <mat-card-subtitle>{{ animal.species }} - {{ animal.breed }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p><strong>Age:</strong> {{ animal.age }}</p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="owner-card">
+      <mat-card-header>
+        <mat-card-title>Owner Information</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p><strong>Name:</strong> {{ animal.owner.name }}</p>
+        <p><strong>Email:</strong> {{ animal.owner.email }}</p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <h2>Appointments for {{ animal?.name }}</h2>
+  <div *ngIf="pagedAppointments.length; else noAppointments">
+    <table class="appointments-table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let appointment of pagedAppointments">
+          <td>{{ appointment.date | date:'short' }}</td>
+          <td>{{ appointment.description }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="pagination">
+      <button (click)="goToPage(page - 1)" [disabled]="page === 1">Previous</button>
+      <span>Page {{ page }} of {{ totalPages }}</span>
+      <button (click)="goToPage(page + 1)" [disabled]="page === totalPages">Next</button>
     </div>
   </div>
-
-  <!-- Error State -->
-  <div *ngIf="error" class="alert alert-danger" role="alert">
-    {{ error }}
-  </div>
-
-  <!-- Animal Details -->
-  <div *ngIf="animal && !loading && !error" class="container-fluid">
-    <!-- Animal and Owner Info -->
-    <div class="row mb-4">
-      <!-- Animal Info -->
-      <div class="col-md-6">
-        <div class="card h-100">
-          <div class="card-header bg-primary text-white">
-            <h5 class="card-title mb-0">Animal Information</h5>
-          </div>
-          <div class="card-body">
-            <div class="row">
-              <div class="col-md-6">
-                <p><strong>Name:</strong> {{ animal.name }}</p>
-                <p><strong>Species:</strong> {{ animal.species }}</p>
-                <p><strong>Breed:</strong> {{ animal.breed }}</p>
-              </div>
-              <div class="col-md-6">
-                <p><strong>Age:</strong> {{ animal.age }} years</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Owner Info -->
-      <div class="col-md-6">
-        <div class="card h-100">
-          <div class="card-header bg-primary text-white">
-            <h5 class="card-title mb-0">Owner Information</h5>
-          </div>
-          <div class="card-body">
-            <div class="row">
-              <div class="col-md-6">
-                <p><strong>Name:</strong> {{ animal.owner.name }}</p>
-                <p><strong>Email:</strong> {{ animal.owner.email }}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Appointments -->
-    <div class="card">
-      <div class="card-header bg-primary text-white">
-        <h5 class="card-title mb-0">Recent Appointments</h5>
-      </div>
-      <div class="card-body">
-        <div class="table-responsive">
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Description</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let appointment of appointments">
-                <td>{{ appointment.date | date:'dd/MM/yyyy HH:mm' }}</td>
-                <td>{{ appointment.description }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Pagination -->
-        <div class="d-flex justify-content-between align-items-center mt-3">
-          <div>
-            <span class="text-muted">
-              Page {{ page }} of {{ totalPages }} (Total: {{ totalCount }} appointments)
-            </span>
-          </div>
-          <nav aria-label="Page navigation">
-            <ul class="pagination mb-0 d-flex">
-              <li class="page-item" [class.disabled]="page === 1">
-                <a class="page-link" href="#" (click)="goToPage(page - 1); $event.preventDefault()" aria-label="Previous">
-                  <span aria-hidden="true">&laquo;</span>
-                </a>
-              </li>
-              <li class="page-item" [class.disabled]="page === totalPages">
-                <a class="page-link" href="#" (click)="goToPage(page + 1); $event.preventDefault()" aria-label="Next">
-                  <span aria-hidden="true">&raquo;</span>
-                </a>
-              </li>
-            </ul>
-          </nav>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- No Animal Found -->
-  <div *ngIf="!animal && !loading && !error" class="alert alert-info" role="alert">
-    Animal not found.
-  </div>
-</div> 
+  <ng-template #noAppointments>
+    <p>No appointments found.</p>
+  </ng-template>
+</div>

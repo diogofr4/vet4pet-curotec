@@ -5,6 +5,7 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { MatCardModule } from '@angular/material/card';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -13,7 +14,7 @@ import { authReducer } from './core/store/auth/auth.reducer';
 import { AuthEffects } from './core/store/auth/auth.effects';
 import { environment } from '../environments/environment';
 import { AuthInterceptor } from './core/interceptors/auth.interceptor';
-import { AnimalDetailsComponent } from './features/animal-details/animal-details/animal-details.component';
+import { AnimalDetailsComponent } from './features/animal-details/animal-details.component';
 
 @NgModule({
   declarations: [
@@ -26,6 +27,7 @@ import { AnimalDetailsComponent } from './features/animal-details/animal-details
     BrowserAnimationsModule,
     HttpClientModule,
     AuthModule,
+    MatCardModule,
     StoreModule.forRoot({ auth: authReducer }),
     EffectsModule.forRoot([AuthEffects]),
     StoreDevtoolsModule.instrument({
