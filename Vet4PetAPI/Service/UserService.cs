@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 using Domain;
 using Repository.Interfaces;
 using Service.Interfaces;
@@ -23,6 +24,12 @@ namespace Service
         public async Task<User> GetUserByIdAsync(int id)
         {
             return await _unitOfWork.Users.GetByIdAsync(id);
+        }
+
+        public async Task<User> GetUserByEmailAsync(string email)
+        {
+            var users = await _unitOfWork.Users.GetAllAsync();
+            return users.FirstOrDefault(u => u.Email == email);
         }
 
         public async Task<User> CreateUserAsync(User user, string password)

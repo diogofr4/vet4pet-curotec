@@ -15,10 +15,14 @@ namespace Service
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<IEnumerable<Message>> GetMessagesByAppointmentIdAsync(int appointmentId)
+        public async Task<IEnumerable<Message>> GetAllMessagesAsync()
         {
-            var appointment = await _unitOfWork.Appointments.GetByIdAsync(appointmentId);
-            return appointment?.Messages ?? new List<Message>();
+            return await _unitOfWork.Messages.GetAllAsync();
+        }
+
+        public async Task<Message> GetMessageByIdAsync(int id)
+        {
+            return await _unitOfWork.Messages.GetByIdAsync(id);
         }
 
         public async Task<Message> SendMessageAsync(Message message)
@@ -26,6 +30,22 @@ namespace Service
             await _unitOfWork.Messages.AddAsync(message);
             await _unitOfWork.SaveChangesAsync();
             return message;
+        }
+
+        public async Task UpdateMessageAsync(Message message)
+        {
+            _unitOfWork.Messages.Update(message);
+            await _unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task DeleteMessageAsync(int id)
+        {
+            var message = await _unitOfWork.Messages.GetByIdAsync(id);
+            if (message != null)
+            {
+                _unitOfWork.Messages.Delete(message);
+                await _unitOfWork.SaveChangesAsync();
+            }
         }
     }
 } 
