@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Repository.Interfaces;
 using Infrastructure;
@@ -40,6 +41,11 @@ namespace Repository
         public void Delete(T entity)
         {
             _dbSet.Remove(entity);
+        }
+
+        public IQueryable<T> Query()
+        {
+            return _dbSet.AsQueryable();
         }
     }
 } 

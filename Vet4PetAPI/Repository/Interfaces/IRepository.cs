@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace Repository.Interfaces
 {
@@ -10,5 +11,6 @@ namespace Repository.Interfaces
         Task AddAsync(T entity);
         void Update(T entity);
         void Delete(T entity);
+        IQueryable<T> Query();
     }
 } 
