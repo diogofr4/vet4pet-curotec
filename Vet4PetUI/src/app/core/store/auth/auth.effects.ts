@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
 import { map, mergeMap, catchError, tap } from 'rxjs/operators';
+import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import * as AuthActions from './auth.actions';
 
@@ -26,6 +27,7 @@ export class AuthEffects {
         tap(({ response }) => {
           localStorage.setItem('token', response.token);
           localStorage.setItem('user', JSON.stringify(response.user));
+          this.router.navigate(['/dashboard']);
         })
       ),
     { dispatch: false }
@@ -38,6 +40,7 @@ export class AuthEffects {
         tap(() => {
           localStorage.removeItem('token');
           localStorage.removeItem('user');
+          this.router.navigate(['/login']);
         })
       ),
     { dispatch: false }
@@ -45,6 +48,7 @@ export class AuthEffects {
 
   constructor(
     private actions$: Actions,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) {}
 } 
