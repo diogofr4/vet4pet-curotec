@@ -1,0 +1,35 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio
+.vscode/
+.vs/
+
+# Logs
+*.log
+
+# Secrets
+appsettings.*.json
+appsettings.*.Development.json
+secrets.json
+
+# Docker
+**/Dockerfile
+**/docker-compose*
+
+# Build results
+publish/
+*.db
+
+# Rider
+.idea/
+
+# Test Results
+TestResults/
+*.coverage
+*.coveragexml
