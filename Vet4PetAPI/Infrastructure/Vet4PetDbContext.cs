@@ -40,13 +40,13 @@ namespace Infrastructure
                 .HasForeignKey(ap => ap.AnimalId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Appointment
-            modelBuilder.Entity<Appointment>()
-                .HasMany(ap => ap.Messages)
-                .WithOne(m => m.Appointment)
-                .HasForeignKey(m => m.AppointmentId)
-                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Animal>()
+                .HasOne(a => a.Vet)
+                .WithMany()
+                .HasForeignKey(a => a.VetId)
+                .OnDelete(DeleteBehavior.Restrict);
 
+            // Appointment
             modelBuilder.Entity<Appointment>()
                 .HasOne(ap => ap.Owner)
                 .WithMany()
