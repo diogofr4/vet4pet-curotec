@@ -9,6 +9,8 @@ namespace Domain
         public int Age { get; set; }
         public int OwnerId { get; set; }
         public User Owner { get; set; }
+        public int? VetId { get; set; }
+        public User Vet { get; set; }
         public ICollection<Appointment> Appointments { get; set; }
     }
 } 

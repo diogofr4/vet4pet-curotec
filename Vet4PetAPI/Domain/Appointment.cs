@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 
 namespace Domain
 {
@@ -14,6 +13,5 @@ namespace Domain
         public User Owner { get; set; }
         public DateTime Date { get; set; }
         public string Description { get; set; }
-        public ICollection<Message> Messages { get; set; }
     }
 } 
