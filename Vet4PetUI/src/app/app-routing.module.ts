@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './features/auth/login/login.component';
 import { authGuard } from './core/guards/auth.guard';
-import { AnimalDetailsComponent } from './features/animal-details/animal-details/animal-details.component';
+import { AnimalDetailsComponent } from './features/animal-details/animal-details.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
