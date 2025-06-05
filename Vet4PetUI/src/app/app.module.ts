@@ -13,10 +13,12 @@ import { authReducer } from './core/store/auth/auth.reducer';
 import { AuthEffects } from './core/store/auth/auth.effects';
 import { environment } from '../environments/environment';
 import { AuthInterceptor } from './core/interceptors/auth.interceptor';
+import { AnimalDetailsComponent } from './features/animal-details/animal-details/animal-details.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    AnimalDetailsComponent
   ],
   imports: [
     BrowserModule,

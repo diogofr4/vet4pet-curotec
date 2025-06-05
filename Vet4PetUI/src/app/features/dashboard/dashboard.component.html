@@ -6,7 +6,7 @@
 
   <div *ngIf="!loading && !error">
     <div class="animals-grid">
-      <mat-card *ngFor="let animal of animals" class="animal-card" (click)="onAnimalClick(animal)">
+      <mat-card *ngFor="let animal of animals" class="animal-card" (click)="goToAnimalDetails(animal)">
         <mat-card-header>
           <mat-card-title>{{ animal.name }}</mat-card-title>
           <mat-card-subtitle>{{ animal.species }} - {{ animal.breed }}</mat-card-subtitle>

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AnimalService, Animal } from 'src/app/core/services/animal.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
@@ -12,7 +13,10 @@ export class DashboardComponent implements OnInit {
   loading = false;
   error: string | null = null;
 
-  constructor(private animalService: AnimalService) {}
+  constructor(
+    private animalService: AnimalService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.fetchAnimals();
@@ -73,5 +77,9 @@ export class DashboardComponent implements OnInit {
 
   onAnimalClick(animal: Animal): void {
     console.log('Clicked on animal:', animal);
+  }
+
+  goToAnimalDetails(animal: any) {
+    this.router.navigate(['/animal-details', animal.id]);
   }
 } 
