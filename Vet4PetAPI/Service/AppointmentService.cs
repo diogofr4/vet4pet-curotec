@@ -45,7 +45,7 @@ namespace Service
             var appointment = await _unitOfWork.Appointments.GetByIdAsync(id);
             if (appointment != null)
             {
-                _unitOfWork.Appointments.Remove(appointment);
+                _unitOfWork.Appointments.Delete(appointment);
                 await _unitOfWork.SaveChangesAsync();
             }
         }

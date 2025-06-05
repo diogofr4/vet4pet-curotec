@@ -29,7 +29,7 @@ namespace Service
         public async Task<User> GetUserByEmailAsync(string email)
         {
             var users = await _unitOfWork.Users.GetAllAsync();
-            return users.FirstOrDefault(u => u.Email == email);
+            return users.FirstOrDefault(u => u.Email == email) ?? throw new KeyNotFoundException($"User with email {email} not found.");
         }
 
         public async Task<User> CreateUserAsync(User user, string password)
