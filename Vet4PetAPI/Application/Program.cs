@@ -7,6 +7,7 @@ using Repository.Interfaces;
 using Service;
 using Service.Interfaces;
 using System.Text;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,15 +22,20 @@ builder.Services.AddCors(options =>
 });
 
 // Add services to the container.
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.WriteIndented = true;
+    });
 
-builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // DbContext
 builder.Services.AddDbContext<Vet4PetDbContext>(options =>
-    options.UseInMemoryDatabase("Vet4PetDb") // Change to UseSqlServer for production
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 
 // Repositories and Unit of Work
@@ -42,7 +48,7 @@ builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 builder.Services.AddScoped<IMessageService, MessageService>();
 
 // JWT Authentication
-var jwtKey = "THIS_IS_A_PLACEHOLDER_SECRET_KEY_CHANGE_IT";
+var jwtKey = builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT Key not found in configuration");
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -83,6 +89,7 @@ app.MapHub<Application.Hubs.ChatHub>("/chathub");
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<Infrastructure.Vet4PetDbContext>();
+    dbContext.Database.Migrate();
     Infrastructure.DbSeeder.Seed(dbContext);
 }
 

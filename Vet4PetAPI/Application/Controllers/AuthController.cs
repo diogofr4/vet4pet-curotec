@@ -28,12 +28,12 @@ namespace Application.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
-            var user = await _userService.GetUserByIdAsync(request.UserId); // Replace with real validation
-            if (user == null || user.PasswordHash != request.Password) // Replace with real password check
+            var user = await _userService.GetUserByEmailAsync(request.Email);
+            if (user == null || user.PasswordHash != request.Password)
                 return Unauthorized();
 
             var token = GenerateJwtToken(user);
-            return Ok(new { token });
+            return Ok(new { token, userName = user.Name, userId = user.Id, userEmail = user.Email, userRole = user.Role });
         }
 
         [HttpPost("register")]
@@ -75,7 +75,7 @@ namespace Application.Controllers
 
     public class LoginRequest
     {
-        public int UserId { get; set; } // Replace with Email for real implementation
+        public string Email { get; set; }
         public string Password { get; set; }
     }
 

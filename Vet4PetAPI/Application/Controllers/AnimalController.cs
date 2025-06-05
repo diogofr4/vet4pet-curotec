@@ -34,6 +34,13 @@ namespace Application.Controllers
             return Ok(animal);
         }
 
+        [HttpGet("vet/{vetId}")]
+        public async Task<ActionResult<IEnumerable<Animal>>> GetByVetId(int vetId)
+        {
+            var animals = await _animalService.GetAnimalsByVetIdAsync(vetId);
+            return Ok(animals);
+        }
+
         [HttpPost]
         public async Task<ActionResult<Animal>> Create([FromBody] Animal animal)
         {

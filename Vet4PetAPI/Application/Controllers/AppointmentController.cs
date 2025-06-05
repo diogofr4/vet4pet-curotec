@@ -19,6 +19,16 @@ namespace Application.Controllers
             _appointmentService = appointmentService;
         }
 
+        [HttpGet("by-animal")]
+        public async Task<ActionResult<PaginatedResponse<Appointment>>> GetByAnimal(
+            [FromQuery] int animalId,
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10)
+        {
+            var appointments = await _appointmentService.GetAppointmentsByAnimalAsync(animalId, page, pageSize);
+            return Ok(appointments);
+        }
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Appointment>>> GetAll()
         {
@@ -55,5 +65,14 @@ namespace Application.Controllers
             await _appointmentService.DeleteAppointmentAsync(id);
             return NoContent();
         }
+    }
+
+    public class PaginatedResponse<T>
+    {
+        public IEnumerable<T> Items { get; set; }
+        public int TotalCount { get; set; }
+        public int PageNumber { get; set; }
+        public int PageSize { get; set; }
+        public int TotalPages { get; set; }
     }
 } 

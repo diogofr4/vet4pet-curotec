@@ -19,11 +19,20 @@ namespace Application.Controllers
             _messageService = messageService;
         }
 
-        [HttpGet("appointment/{appointmentId}")]
-        public async Task<ActionResult<IEnumerable<Message>>> GetByAppointmentId(int appointmentId)
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Message>>> GetAll()
         {
-            var messages = await _messageService.GetMessagesByAppointmentIdAsync(appointmentId);
+            var messages = await _messageService.GetAllMessagesAsync();
             return Ok(messages);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Message>> GetById(int id)
+        {
+            var message = await _messageService.GetMessageByIdAsync(id);
+            if (message == null)
+                return NotFound();
+            return Ok(message);
         }
 
         [HttpPost]
@@ -31,6 +40,23 @@ namespace Application.Controllers
         {
             var sentMessage = await _messageService.SendMessageAsync(message);
             return Ok(sentMessage);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateMessage(int id, [FromBody] Message message)
+        {
+            if (id != message.Id)
+                return BadRequest();
+
+            await _messageService.UpdateMessageAsync(message);
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteMessage(int id)
+        {
+            await _messageService.DeleteMessageAsync(id);
+            return NoContent();
         }
     }
 } 
