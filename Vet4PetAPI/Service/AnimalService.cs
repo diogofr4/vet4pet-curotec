@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 using Domain;
 using Repository.Interfaces;
 using Service.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Service
 {
@@ -46,6 +48,14 @@ namespace Service
                 _unitOfWork.Animals.Delete(animal);
                 await _unitOfWork.SaveChangesAsync();
             }
+        }
+
+        public async Task<IEnumerable<Animal>> GetAnimalsByVetIdAsync(int vetId)
+        {
+            return await _unitOfWork.Animals.Query()
+                .Where(a => a.VetId == vetId)
+                .Include(a => a.Owner)
+                .ToListAsync();
         }
     }
 } 

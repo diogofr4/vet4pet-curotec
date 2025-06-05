@@ -11,5 +11,6 @@ namespace Service.Interfaces
         Task<Animal> CreateAnimalAsync(Animal animal);
         Task UpdateAnimalAsync(Animal animal);
         Task DeleteAnimalAsync(int id);
+        Task<IEnumerable<Animal>> GetAnimalsByVetIdAsync(int vetId);
     }
 } 

@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using Domain;
 using Repository.Interfaces;
 using Service.Interfaces;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace Service
 {
@@ -43,9 +45,35 @@ namespace Service
             var appointment = await _unitOfWork.Appointments.GetByIdAsync(id);
             if (appointment != null)
             {
-                _unitOfWork.Appointments.Delete(appointment);
+                _unitOfWork.Appointments.Remove(appointment);
                 await _unitOfWork.SaveChangesAsync();
             }
+        }
+
+        public async Task<PaginatedResponse<Appointment>> GetAppointmentsByAnimalAsync(int animalId, int page, int pageSize)
+        {
+            var query = _unitOfWork.Appointments.GetQueryable()
+                .Where(a => a.AnimalId == animalId)
+                .Include(a => a.Vet)
+                .Include(a => a.Owner)
+                .OrderByDescending(a => a.Date);
+
+            var totalCount = await query.CountAsync();
+            var totalPages = (int)System.Math.Ceiling(totalCount / (double)pageSize);
+
+            var items = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return new PaginatedResponse<Appointment>
+            {
+                Items = items,
+                TotalCount = totalCount,
+                PageNumber = page,
+                PageSize = pageSize,
+                TotalPages = totalPages
+            };
         }
     }
 } 

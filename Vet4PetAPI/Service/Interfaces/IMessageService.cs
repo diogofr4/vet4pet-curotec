@@ -6,7 +6,10 @@ namespace Service.Interfaces
 {
     public interface IMessageService
     {
-        Task<IEnumerable<Message>> GetMessagesByAppointmentIdAsync(int appointmentId);
+        Task<IEnumerable<Message>> GetAllMessagesAsync();
+        Task<Message> GetMessageByIdAsync(int id);
         Task<Message> SendMessageAsync(Message message);
+        Task UpdateMessageAsync(Message message);
+        Task DeleteMessageAsync(int id);
     }
 } 
