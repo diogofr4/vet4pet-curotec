@@ -69,4 +69,10 @@ app.UseAuthorization();
 app.MapControllers();
 app.MapHub<Application.Hubs.ChatHub>("/chathub");
 
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<Infrastructure.Vet4PetDbContext>();
+    Infrastructure.DbSeeder.Seed(dbContext);
+}
+
 app.Run();
