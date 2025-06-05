@@ -3,11 +3,13 @@ using System.Threading.Tasks;
 using Service.Interfaces;
 using Domain;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Application.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
