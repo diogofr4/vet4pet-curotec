@@ -1,0 +1,9 @@
+<h2>Consultations</h2>
+<div *ngIf="loading">Loading...</div>
+<div *ngIf="error" class="error">{{ error }}</div>
+<ul *ngIf="!loading && !error">
+  <li *ngFor="let consultation of consultations">
+    {{ consultation.date }} - {{ consultation.animal }} ({{ consultation.vet }})
+    <button (click)="goToDetail(consultation.id)">View Details</button>
+  </li>
+</ul> 

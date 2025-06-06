@@ -1,0 +1,118 @@
+.dashboard-container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  h1 {
+    margin-bottom: 1rem;
+    color: #333;
+  }
+
+  p {
+    color: #666;
+    font-size: 1.1rem;
+  }
+}
+
+.animals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.animal-card {
+  cursor: pointer;
+  transition: transform 0.2s;
+  background-color: #e3f2fd;
+  border: 1px solid #bbdefb;
+
+  &:hover {
+    transform: translateY(-4px);
+  }
+
+  mat-card-header {
+    padding: 16px;
+    border-bottom: 1px solid #bbdefb;
+    background-color: #bbdefb;
+    
+    mat-card-title {
+      color: #1565c0;
+      font-size: 1.2rem;
+      margin-bottom: 4px;
+    }
+    
+    mat-card-subtitle {
+      color: #1976d2;
+    }
+  }
+
+  mat-card-content {
+    padding: 16px;
+  }
+}
+
+.animal-avatar {
+  background-color: #e3f2fd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  mat-icon {
+    color: #1976d2;
+  }
+}
+
+.animal-info {
+  margin: 0;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #bbdefb;
+
+  p {
+    margin: 0.5rem 0;
+    color: #1565c0;
+    font-size: 0.95rem;
+    
+    strong {
+      color: #1976d2;
+    }
+  }
+}
+
+.divider {
+  margin: 16px 0;
+}
+
+.appointments-section {
+  .appointment-info {
+    margin: 0;
+    padding: 1rem 0;
+    border-bottom: 1px solid #bbdefb;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    p {
+      margin: 0.5rem 0;
+      color: #1565c0;
+      font-size: 0.9rem;
+      
+      strong {
+        color: #1976d2;
+      }
+    }
+  }
+}
+
+mat-card-actions {
+  padding: 8px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  
+  button {
+    mat-icon {
+      margin-right: 4px;
+    }
+  }
+} 

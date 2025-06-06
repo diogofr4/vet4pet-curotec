@@ -1,0 +1,24 @@
+<div class="dashboard-container">
+  <h1>Dashboard</h1>
+
+  <div *ngIf="loading" class="loading">Loading animals...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <div *ngIf="!loading && !error">
+    <div class="animals-grid">
+      <mat-card *ngFor="let animal of animals" class="animal-card" (click)="goToAnimalDetails(animal)">
+        <mat-card-header>
+          <mat-card-title>{{ animal.name }}</mat-card-title>
+          <mat-card-subtitle>{{ animal.species }} - {{ animal.breed }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="animal-info">
+            <p><strong>Age:</strong> {{ animal.age }}</p>
+            <p><strong>Owner:</strong> {{ animal.owner.name }}</p>
+          </div>       
+        </mat-card-content>
+      </mat-card>
+    </div>
+    <div *ngIf="animals.length === 0 && !loading" class="no-animals">No animals found.</div>
+  </div>
+</div> 

@@ -1,0 +1,27 @@
+<h2>Patient Details</h2>
+<div *ngIf="loading">Loading...</div>
+<div *ngIf="error" class="error">{{ error }}</div>
+<div *ngIf="!loading && !error && patient">
+  <strong>Name:</strong> {{ patient.name }}<br />
+  <strong>Species:</strong> {{ patient.species }}<br />
+  <strong>Owner:</strong> {{ patient.owner }}
+</div>
+
+<h3>Appointments</h3>
+<div>
+  <!-- Appointments list placeholder -->
+  <p>No appointments found.</p>
+</div>
+
+<h3>Chat</h3>
+<div class="chat-box">
+  <div class="messages">
+    <div *ngFor="let msg of chatMessages">
+      <strong>{{ msg.sender }}:</strong> {{ msg.text }} <span style="font-size: 0.8em; color: #888;">({{ msg.timestamp | date:'shortTime' }})</span>
+    </div>
+  </div>
+  <form (ngSubmit)="sendMessage()">
+    <input [(ngModel)]="chatInput" name="chatInput" placeholder="Type a message..." required />
+    <button type="submit">Send</button>
+  </form>
+</div> 

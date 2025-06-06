@@ -1,0 +1,89 @@
+<div class="animal-details-container">
+  <div *ngIf="loading" class="loading">Loading animal information...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <div *ngIf="animal" class="info-cards">
+    <mat-card class="animal-card">
+      <mat-card-header>
+        <mat-card-title>{{ animal.name }}</mat-card-title>
+        <mat-card-subtitle>{{ animal.species }} - {{ animal.breed }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p><strong>Age:</strong> {{ animal.age }}</p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="owner-card">
+      <mat-card-header>
+        <mat-card-title>Owner Information</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p><strong>Name:</strong> {{ animal.owner.name }}</p>
+        <p><strong>Email:</strong> {{ animal.owner.email }}</p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <h2>Appointments for {{ animal?.name }}</h2>
+  <div *ngIf="pagedAppointments.length; else noAppointments">
+    <table class="appointments-table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let appointment of pagedAppointments">
+          <td>{{ appointment.date | date:'short' }}</td>
+          <td>{{ appointment.description }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="pagination">
+      <button (click)="goToPage(page - 1)" [disabled]="page === 1">Previous</button>
+      <span>Page {{ page }} of {{ totalPages }}</span>
+      <button (click)="goToPage(page + 1)" [disabled]="page === totalPages">Next</button>
+    </div>
+  </div>
+  <ng-template #noAppointments>
+    <p>No appointments found.</p>
+  </ng-template>
+
+  <!-- Chat Section -->
+  <div class="chat-section">
+    <h2>Chat</h2>
+    <div *ngIf="chatError" class="error-message">
+      {{ chatError }}
+    </div>
+    <div class="chat-container">
+      <div class="chat-messages" #chatMessages>
+        <div *ngFor="let message of messages" 
+             [ngClass]="{'message': true, 'sent': message.senderId === user?.userId, 'received': message.senderId !== user?.userId}">
+          <div class="message-content">
+            <div class="message-header">
+              <span class="sender-name">{{ message.senderRole === 'veterinarian' ? 'Veterinarian' : 'Owner' }}</span>
+              <span class="message-time">{{ message.timestamp | date:'short' }}</span>
+            </div>
+            <p>{{ message.content }}</p>
+          </div>
+        </div>
+      </div>
+      <form (ngSubmit)="sendMessage()" class="message-form">
+        <mat-form-field appearance="outline" class="message-input">
+          <mat-label>Type your message...</mat-label>
+          <input matInput
+                 [(ngModel)]="newMessage"
+                 name="message"
+                 [disabled]="sending">
+        </mat-form-field>
+        <button mat-raised-button
+                color="primary"
+                type="submit"
+                [disabled]="!newMessage.trim() || sending">
+          <mat-icon>send</mat-icon>
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
