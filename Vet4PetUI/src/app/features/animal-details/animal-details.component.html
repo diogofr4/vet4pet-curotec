@@ -49,4 +49,33 @@
   <ng-template #noAppointments>
     <p>No appointments found.</p>
   </ng-template>
+
+  <!-- Chat Section -->
+  <div class="chat-section">
+    <h3>Chat between Veterinarian and Owner</h3>
+    <div class="chat-bubbles-wrapper">
+      <div *ngFor="let msg of messages" class="chat-bubble-row" [ngClass]="{'right': msg.senderRole === 'veterinarian', 'left': msg.senderRole === 'owner'}">
+        <div class="chat-bubble">
+          <div class="chat-bubble-meta">
+            <span class="sender">{{ msg.senderRole | titlecase }}</span>
+            <span class="timestamp">{{ msg.timestamp | date:'shortTime' }}</span>
+          </div>
+          <div class="chat-bubble-content">{{ msg.content }}</div>
+        </div>
+      </div>
+    </div>
+    <form class="chat-form" (ngSubmit)="sendMessage()">
+      <input
+        type="text"
+        [(ngModel)]="newMessage"
+        name="newMessage"
+        placeholder="Type your message..."
+        [disabled]="sending"
+        required
+        maxlength="500"
+      />
+      <button type="submit" [disabled]="sending || !newMessage.trim()">Send</button>
+    </form>
+    <div *ngIf="chatError" class="error">{{ chatError }}</div>
+  </div>
 </div>
