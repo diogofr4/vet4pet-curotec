@@ -35,6 +35,23 @@ namespace Application.Controllers
             return Ok(message);
         }
 
+        [HttpGet("by-animal/{animalId}")]
+        public async Task<ActionResult<IEnumerable<Message>>> GetByAnimal(int animalId)
+        {
+            var messages = await _messageService.GetMessagesByAnimalAsync(animalId);
+            return Ok(messages);
+        }
+
+        [HttpGet("between-users")]
+        public async Task<ActionResult<IEnumerable<Message>>> GetBetweenUsers(
+            [FromQuery] int senderId,
+            [FromQuery] int receiverId,
+            [FromQuery] int animalId)
+        {
+            var messages = await _messageService.GetMessagesBetweenUsersAsync(senderId, receiverId, animalId);
+            return Ok(messages);
+        }
+
         [HttpPost]
         public async Task<ActionResult<Message>> SendMessage([FromBody] Message message)
         {

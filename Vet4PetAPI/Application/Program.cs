@@ -17,7 +17,8 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins("http://localhost:4200")
               .AllowAnyHeader()
-              .AllowAnyMethod();
+              .AllowAnyMethod()
+              .AllowCredentials();
     });
 });
 
@@ -66,6 +67,7 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+// Add SignalR
 builder.Services.AddSignalR();
 
 var app = builder.Build();
@@ -84,7 +86,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-app.MapHub<Application.Hubs.ChatHub>("/chathub");
+app.MapHub<Application.Hubs.ChatHub>("/api/chat");
 
 using (var scope = app.Services.CreateScope())
 {

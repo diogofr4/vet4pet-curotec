@@ -1,17 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AppointmentService, Appointment, PagedResult } from '../../core/services/appointment.service';
 import { AnimalService, Animal } from '../../core/services/animal.service';
 import { MessageService } from '../../core/services/message.service';
 import { Message } from '../../core/models/message.model';
 import { AuthService } from '../../core/services/auth.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-animal-details',
   templateUrl: './animal-details.component.html',
-  styleUrls: ['./animal-details.component.scss']
+  styleUrls: ['./animal-details.component.scss'],
+  standalone: false,
 })
-export class AnimalDetailsComponent implements OnInit {
+export class AnimalDetailsComponent implements OnInit, OnDestroy {
   animalId!: string;
   pagedAppointments: Appointment[] = [];
   page = 1;
@@ -22,32 +24,12 @@ export class AnimalDetailsComponent implements OnInit {
   error: string | null = null;
 
   // Chat state
-  messages: Message[] = [
-    {
-      id: 1,
-      animalId: 1,
-      senderId: 1,
-      senderRole: 'veterinarian',
-      receiverId: 2,
-      receiverRole: 'owner',
-      content: 'Hello, how is your pet today?',
-      timestamp: new Date().toISOString()
-    },
-    {
-      id: 2,
-      animalId: 1,
-      senderId: 2,
-      senderRole: 'owner',
-      receiverId: 1,
-      receiverRole: 'veterinarian',
-      content: 'He is doing well, thank you!',
-      timestamp: new Date(Date.now() - 60000).toISOString()
-    }
-  ];
+  messages: Message[] = [];
   newMessage: string = '';
   sending = false;
   chatError: string | null = null;
-  user: any = { userId: 1, role: 1, name: 'Dr. Vet' };
+  user: any = null;
+  private messageSubscription?: Subscription;
 
   constructor(
     private route: ActivatedRoute,
@@ -62,6 +44,42 @@ export class AnimalDetailsComponent implements OnInit {
     this.user = this.authService.getUser();
     this.loadAnimal();
     this.loadAppointments();
+    this.initializeChat();
+  }
+
+  ngOnDestroy(): void {
+    this.messageSubscription?.unsubscribe();
+    this.messageService.stopConnection();
+  }
+
+  private async initializeChat() {
+    try {
+      const token = this.authService.getToken();
+      if (!token) {
+        this.chatError = 'Authentication required for chat';
+        return;
+      }
+
+      await this.messageService.startConnection(token);
+      await this.messageService.joinAnimalChat(Number(this.animalId));
+
+      // Carregar histórico de mensagens
+      this.messageService.getMessagesByAnimal(Number(this.animalId)).subscribe({
+        next: (msgs) => {
+          this.messages = msgs;
+        },
+        error: (err) => {
+          this.chatError = 'Failed to load messages';
+        }
+      });
+
+      // Inscrever para novas mensagens
+      this.messageSubscription = this.messageService.message$.subscribe(message => {
+        this.messages.push(message);
+      });
+    } catch (err) {
+      this.chatError = 'Failed to initialize chat';
+    }
   }
 
   loadAnimal() {
@@ -95,38 +113,48 @@ export class AnimalDetailsComponent implements OnInit {
     this.loadAppointments();
   }
 
-  // Chat logic
-  // loadMessages() {
-  //   this.messageService.getMessagesByAnimal(Number(this.animalId)).subscribe({
-  //     next: (msgs) => {
-  //       this.messages = msgs;
-  //     },
-  //     error: (err) => {
-  //       this.chatError = 'Failed to load messages.';
-  //     }
-  //   });
-  // }
-
-  sendMessage() {
-    if (!this.newMessage.trim()) return;
+  async sendMessage() {
+    if (!this.newMessage.trim() || !this.animal) return;
     this.sending = true;
     this.chatError = null;
-    const senderRole = this.user?.role === 1 ? 'veterinarian' : 'owner';
-    const receiverRole = senderRole === 'veterinarian' ? 'owner' : 'veterinarian';
-    const senderId = this.user?.userId;
-    const receiverId = receiverRole === 'owner' ? 2 : 1;
-    const newMsg: Message = {
-      id: this.messages.length + 1,
-      animalId: 1,
-      senderId,
-      senderRole,
-      receiverId,
-      receiverRole,
-      content: this.newMessage,
-      timestamp: new Date().toISOString()
-    };
-    this.messages.push(newMsg);
-    this.newMessage = '';
-    this.sending = false;
+
+    try {
+      const senderRole = this.user?.role === 1 ? 'veterinarian' : 'owner';
+      const receiverRole = senderRole === 'veterinarian' ? 'owner' : 'veterinarian';
+      const senderId = this.user?.userId;
+      const receiverId = receiverRole === 'owner' ? this.animal.ownerId : this.animal.vetId;
+
+      await this.messageService.sendMessage({
+        animalId: Number(this.animalId),
+        senderId,
+        senderRole,
+        receiverId,
+        receiverRole,
+        content: this.newMessage
+      });
+
+      this.newMessage = '';
+      
+      // Recarregar mensagens após envio bem-sucedido
+      this.messageService.getMessagesByAnimal(Number(this.animalId)).subscribe({
+        next: (msgs) => {
+          this.messages = msgs;
+          // Scroll para a última mensagem
+          setTimeout(() => {
+            const chatMessages = document.querySelector('.chat-messages');
+            if (chatMessages) {
+              chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+          });
+        },
+        error: (err) => {
+          this.chatError = 'Failed to refresh messages';
+        }
+      });
+    } catch (err) {
+      this.chatError = 'Failed to send message';
+    } finally {
+      this.sending = false;
+    }
   }
 }

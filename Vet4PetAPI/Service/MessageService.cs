@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 using Domain;
 using Repository.Interfaces;
 using Service.Interfaces;
@@ -25,8 +26,25 @@ namespace Service
             return await _unitOfWork.Messages.GetByIdAsync(id);
         }
 
+        public async Task<IEnumerable<Message>> GetMessagesByAnimalAsync(int animalId)
+        {
+            var messages = await _unitOfWork.Messages.GetAllAsync();
+            return messages.Where(m => m.AnimalId == animalId)
+                         .OrderBy(m => m.Timestamp);
+        }
+
+        public async Task<IEnumerable<Message>> GetMessagesBetweenUsersAsync(int senderId, int receiverId, int animalId)
+        {
+            var messages = await _unitOfWork.Messages.GetAllAsync();
+            return messages.Where(m => m.AnimalId == animalId &&
+                                    ((m.SenderId == senderId && m.ReceiverId == receiverId) ||
+                                     (m.SenderId == receiverId && m.ReceiverId == senderId)))
+                         .OrderBy(m => m.Timestamp);
+        }
+
         public async Task<Message> SendMessageAsync(Message message)
         {
+            message.Timestamp = System.DateTime.UtcNow;
             await _unitOfWork.Messages.AddAsync(message);
             await _unitOfWork.SaveChangesAsync();
             return message;

@@ -52,30 +52,38 @@
 
   <!-- Chat Section -->
   <div class="chat-section">
-    <h3>Chat between Veterinarian and Owner</h3>
-    <div class="chat-bubbles-wrapper">
-      <div *ngFor="let msg of messages" class="chat-bubble-row" [ngClass]="{'right': msg.senderRole === 'veterinarian', 'left': msg.senderRole === 'owner'}">
-        <div class="chat-bubble">
-          <div class="chat-bubble-meta">
-            <span class="sender">{{ msg.senderRole | titlecase }}</span>
-            <span class="timestamp">{{ msg.timestamp | date:'shortTime' }}</span>
+    <h2>Chat</h2>
+    <div *ngIf="chatError" class="error-message">
+      {{ chatError }}
+    </div>
+    <div class="chat-container">
+      <div class="chat-messages" #chatMessages>
+        <div *ngFor="let message of messages" 
+             [ngClass]="{'message': true, 'sent': message.senderId === user?.userId, 'received': message.senderId !== user?.userId}">
+          <div class="message-content">
+            <div class="message-header">
+              <span class="sender-name">{{ message.senderRole === 'veterinarian' ? 'Veterinarian' : 'Owner' }}</span>
+              <span class="message-time">{{ message.timestamp | date:'short' }}</span>
+            </div>
+            <p>{{ message.content }}</p>
           </div>
-          <div class="chat-bubble-content">{{ msg.content }}</div>
         </div>
       </div>
+      <form (ngSubmit)="sendMessage()" class="message-form">
+        <mat-form-field appearance="outline" class="message-input">
+          <mat-label>Type your message...</mat-label>
+          <input matInput
+                 [(ngModel)]="newMessage"
+                 name="message"
+                 [disabled]="sending">
+        </mat-form-field>
+        <button mat-raised-button
+                color="primary"
+                type="submit"
+                [disabled]="!newMessage.trim() || sending">
+          <mat-icon>send</mat-icon>
+        </button>
+      </form>
     </div>
-    <form class="chat-form" (ngSubmit)="sendMessage()">
-      <input
-        type="text"
-        [(ngModel)]="newMessage"
-        name="newMessage"
-        placeholder="Type your message..."
-        [disabled]="sending"
-        required
-        maxlength="500"
-      />
-      <button type="submit" [disabled]="sending || !newMessage.trim()">Send</button>
-    </form>
-    <div *ngIf="chatError" class="error">{{ chatError }}</div>
   </div>
 </div>
